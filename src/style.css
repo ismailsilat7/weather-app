@@ -1,0 +1,14 @@
+body {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: center;
+  align-items: center;
+  background-color: black;
+  color: white;
+  text-align: center;
+  height: 90vh;
+}
+
+.logo {
+  width: 200px;
+}
