@@ -125,7 +125,6 @@ async function getCoordinates(location) {
   }
   const data = await response.json();
   if (!data[0]) throw new Error("Location not found");
-  console.log(data);
   return {
     lat: data[0].lat,
     lon: data[0].lon,
@@ -307,7 +306,6 @@ async function displayData(weatherData, displayName, countryCode, symbol) {
   app.append(currentForecast);
   let iconKey = weatherData.days[0].icon;
   let searchTerm = weatherImageMap[iconKey] || "beautiful sky landscape";
-  console.log(searchTerm);
   await setLocationBackground(searchTerm);
 
   const forecast = document.createElement("div");
@@ -364,9 +362,7 @@ form.addEventListener("submit", async (e) => {
     : "metric";
 
   try {
-    const { lat, lon, displayName, countryCode } =
-      await getCoordinates(locationInput);
-    console.log("Found:", displayName);
+    const { lat, lon, displayName, countryCode } = await getCoordinates(locationInput);
 
     lastSearch = {
       lat,
