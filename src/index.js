@@ -4,7 +4,6 @@ import welcomeGIF from "./images/welcome.gif"
 import badRequest from "./images/badRequest.gif"
 import loading from "./images/fetchData.gif"
 
-
 const weatherIconMap = {
   "clear-day": "wi-day-sunny",
   "clear-night": "wi-night-clear",
