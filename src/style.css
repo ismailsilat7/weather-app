@@ -32,14 +32,14 @@ body {
 }
 
 .welcome-message h2 {
-  font-family: 'Montserrat', sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-size: 1.8rem;
   margin-bottom: 10px;
   color: #333;
 }
 
 .welcome-message p {
-  font-family: 'Montserrat', sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-size: 1rem;
   color: #666;
 }
@@ -365,7 +365,7 @@ header {
 }
 
 .humidityWind i {
-  font-size: 14px; 
+  font-size: 14px;
   margin-right: 4px;
 }
 
@@ -404,7 +404,6 @@ header {
   }
 }
 
-
 @media (max-width: 480px) {
   #weather-form h1 {
     font-size: 24px;
@@ -440,4 +439,21 @@ header {
   .right {
     justify-content: flex-end;
   }
+}
+
+footer {
+  text-align: center;
+  padding: 1rem 0;
+  background-color: #ffffff;
+  font-size: 14px;
+  color: #555;
+  border-top: 1px solid #ddd;
+  width: 100%;
+}
+footer a {
+  color: #0366d6;
+  text-decoration: none;
+}
+footer a:hover {
+  text-decoration: underline;
 }
