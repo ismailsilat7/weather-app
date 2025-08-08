@@ -189,7 +189,165 @@ async function setLocationBackground(query) {
   }
 }
 
+async function displayData(weatherData, displayName, countryCode, symbol) {
+  const app = document.getElementById("app");
+  app.innerHTML = "";
 
+  const currentForecast = document.createElement("div");
+  currentForecast.classList.add("currentForecast");
+  const header = document.createElement("div");
+  header.classList.add("location");
+
+  const headerLocation = document.createElement("h2");
+  headerLocation.classList.add("locationHead");
+  headerLocation.textContent = displayName;
+
+  const headerCountryCode = document.createElement("h4");
+  headerCountryCode.classList.add("locationCountryCode");
+  countryCode = " " + countryCode;
+  headerCountryCode.textContent = countryCode
+    ? (", " + countryCode.toUpperCase())
+    : "";
+
+  const description = document.createElement("p");
+  description.classList.add("weather-description");
+  description.textContent = weatherData.description;
+
+  const sunMoonContainer = document.createElement("div");
+  sunMoonContainer.classList.add("sunMoonTimes");
+
+  const sunrise = document.createElement("div");
+  sunrise.innerHTML = `<i class="wi ${getWeatherIconClass("sun-rise")}"></i> Sunrise: ${formatTime(weatherData.days[0].sunrise)}`;
+
+  const sunset = document.createElement("div");
+  sunset.innerHTML = `<i class="wi ${getWeatherIconClass("sun-set")}"></i> Sunset: ${formatTime(weatherData.days[0].sunset)}`;
+
+  const moonPhaseValue = weatherData.days[0].moonphase;
+  const moonPhase = document.createElement("div");
+  moonPhase.innerHTML = `<i class="wi ${getWeatherIconClass(getMoonPhaseIcon(moonPhaseValue))}"></i> ${getMoonPhaseName(moonPhaseValue)}`;
+
+  sunMoonContainer.append(sunrise, sunset, moonPhase);
+
+  header.append(
+    headerLocation,
+    headerCountryCode,
+    description,
+    sunMoonContainer,
+  );
+
+  currentForecast.append(header);
+
+  const todayDetails = document.createElement("div");
+  todayDetails.classList.add("todayDetails");
+
+  const todaysOverview = document.createElement("div");
+  todaysOverview.classList.add("todaysOverview");
+
+  const todayHead = document.createElement("h3");
+  todayHead.classList.add("todayHead");
+  todayHead.textContent = "Today's Overview";
+
+  const tempCards = document.createElement("div");
+  tempCards.classList.add("tempCards");
+
+  const now = new Date();
+  const currentHour = now.getHours();
+  let hours = [...weatherData.days[0].hours, ...weatherData.days[1].hours];
+  let count = 0;
+  for (let i = currentHour; i < hours.length && count < 6; i += 3) {
+    count++;
+    const hour = hours[i];
+    const tempCard = document.createElement("div");
+    tempCard.classList.add("tempCard");
+
+    const hourTime = document.createElement("p");
+    const [h] = hour.datetime.split(":");
+    let hourNum = parseInt(h, 10);
+    const ampm = hourNum >= 12 ? "PM" : "AM";
+    hourNum = hourNum % 12 || 12;
+    hourTime.textContent = `${hourNum} ${ampm}`;
+
+    const hourIcon = document.createElement("i");
+    hourIcon.classList.add("wi", getWeatherIconClass(hour.icon));
+
+    const hourTemp = document.createElement("p");
+    hourTemp.textContent = `${hour.temp}${symbol}`;
+
+    tempCard.append(hourTime, hourIcon, hourTemp);
+    tempCards.append(tempCard);
+  }
+  todaysOverview.append(todayHead, tempCards);
+  todayDetails.append(todaysOverview);
+
+  const metrics = document.createElement("div");
+  metrics.classList.add("humidityWind");
+
+  metrics.innerHTML = `
+  <div>
+    <i class="wi ${weatherIconMap.feelslike}"></i>
+    <strong>Feels Like</strong><br>${weatherData.currentConditions.feelslike}${symbol}
+  </div>
+  <div>
+    <i class="wi ${weatherIconMap.rain}"></i>
+    <strong>Precipitation</strong><br>${weatherData.currentConditions.precipprob || 0}%
+  </div>
+  <div>
+    <i class="wi ${weatherIconMap.windspeed}"></i>
+    <strong>Wind Speed</strong><br>${weatherData.currentConditions.windspeed} mph
+  </div>
+  <div>
+    <i class="wi ${weatherIconMap["clear-day"]}"></i>
+    <strong>UV Level</strong><br>${weatherData.currentConditions.uvindex}
+  </div>
+`;
+
+  todayDetails.append(metrics);
+
+  currentForecast.append(todayDetails);
+
+  app.append(currentForecast);
+  let iconKey = weatherData.days[0].icon;
+  let searchTerm = weatherImageMap[iconKey] || "beautiful sky landscape";
+  console.log(searchTerm);
+  await setLocationBackground(searchTerm);
+
+  const forecast = document.createElement("div");
+  forecast.classList.add("weeklyForecast");
+  let isDayOne = 0;
+  weatherData.days.slice(0, 7).forEach((day) => {
+    const dayCard = document.createElement("div");
+    dayCard.classList.add("dayCard");
+
+    const date = new Date(day.datetime);
+    const options = { day: "numeric", month: "short", weekday: "short" };
+    const fullDate = date.toLocaleDateString("en-US", options);
+
+    const dateEl = document.createElement("p");
+    
+    if(isDayOne== 0) {
+        isDayOne++;
+        dateEl.textContent = "Today"
+        dateEl.style.fontWeight = "bold"
+    } else {
+        dateEl.textContent = fullDate;
+    }
+
+    const icon = document.createElement("i");
+    icon.classList.add("wi", getWeatherIconClass(day.icon));
+
+    const temp = document.createElement("p");
+    temp.innerHTML = `
+    ${day.conditions}<br>
+    <strong>${Math.round(day.tempmax)}${symbol}</strong> / 
+    ${Math.round(day.tempmin)}${symbol}
+  `;
+
+    dayCard.append(dateEl, icon, temp);
+    forecast.append(dayCard);
+  });
+
+  app.append(forecast);
+}
 
 const form = document.getElementById("weather-form");
 let lastSearch = null;
